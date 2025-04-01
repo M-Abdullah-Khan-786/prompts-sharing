@@ -1,4 +1,6 @@
+import { connectDB } from "@/utils/database";
 import NextAuth, { AuthOptions } from "next-auth";
+import type { Profile, Account, User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 const authOptions: AuthOptions = {
@@ -12,8 +14,14 @@ const authOptions: AuthOptions = {
     async session({ session }) {
       return session;
     },
-    async signIn({ profile }) {
-      return true;
+    async signIn({ user, account, profile }: { user: User; account: Account | null; profile?: Profile }) {
+      try {
+        await connectDB();
+        return true;
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
     },
   },
 };
