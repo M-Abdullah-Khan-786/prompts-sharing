@@ -8,11 +8,12 @@ interface Params {
   };
 }
 
-export const GET = async (req: NextRequest, { params }: Params) => {
+export const GET = async (req: NextRequest, { params }: Params ) => {
   try {
     await connectDB();
+    const { id } = await params
     const prompt = await Prompt.find({
-      creator: params.id,
+      creator: id,
     }).populate("creator");
 
     return new Response(JSON.stringify(prompt), {
