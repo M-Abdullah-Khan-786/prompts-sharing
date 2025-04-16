@@ -20,3 +20,28 @@ export const GET = async (req: NextRequest, { params }: Params) => {
     return new Response("Internal Server Error", { status: 500 });
   }
 };
+
+export const PATCH = async (req: NextRequest, { params }: Params) => {
+  const { prompt, tag } = await req.json();
+  try {
+    await connectDB();
+    const { id } = await params;
+    const findPrompt = await Prompt.findById(id);
+    if (!findPrompt) {
+      return new Response("Prompt not Found", { status: 404 });
+    }
+
+    findPrompt.prompt = prompt;
+    findPrompt.tag = tag;
+
+    await findPrompt.save();
+
+    return new Response(JSON.stringify(findPrompt), {
+      status: 200,
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: "Failed to update prompt" }), {
+      status: 500,
+    });
+  }
+};
