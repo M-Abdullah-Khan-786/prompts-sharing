@@ -45,3 +45,22 @@ export const PATCH = async (req: NextRequest, { params }: Params) => {
     });
   }
 };
+
+export const DELETE = async (req: NextRequest, { params }: Params) => {
+  try {
+    await connectDB();
+    const { id } = await params;
+    const findPrompt = await Prompt.findById(id);
+    if (!findPrompt) {
+      return new Response("Prompt not Found", { status: 404 });
+    }
+
+    await Prompt.findByIdAndDelete(id);
+
+    return new Response("Prompt deleted successfully", { status: 200 });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: "Failed to update prompt" }), {
+      status: 500,
+    });
+  }
+};
