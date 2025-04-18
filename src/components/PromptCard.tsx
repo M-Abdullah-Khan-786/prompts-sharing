@@ -2,13 +2,14 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 type Prompt = {
   _id: string;
   prompt: string;
   tag: string;
   creator?: {
+    _id: string;
     username?: string;
     email?: string;
     image?: string;
@@ -17,23 +18,29 @@ type Prompt = {
 
 type PromptCardListProps = {
   prompt: Prompt;
-  handleTagClick: (tag: string) => void;
+  handleTagClick?: (tag: string) => void;
+  handleEdit?: (prompt: Prompt) => void;
+  handleDelete?: (prompt: Prompt) => void;
 };
 
 const PromptCard: React.FC<PromptCardListProps> = ({
   prompt,
   handleTagClick,
+  handleEdit,
+  handleDelete,
 }) => {
   const [isCopied, setIsCopied] = useState("");
 
+  const { data: session } = useSession();
+  const pathName = usePathname();
 
-  const handleCopy = ()=>{
-    setIsCopied(prompt.prompt)
-    navigator.clipboard.writeText(prompt.prompt)
+  const handleCopy = () => {
+    setIsCopied(prompt.prompt);
+    navigator.clipboard.writeText(prompt.prompt);
     setTimeout(() => {
-      setIsCopied("")
+      setIsCopied("");
     }, 3000);
-  }
+  };
 
   return (
     <div className="prompt_card">
@@ -76,8 +83,24 @@ const PromptCard: React.FC<PromptCardListProps> = ({
         className="text-sm blue_gradient cursor-pointer"
         onClick={() => handleTagClick && handleTagClick(prompt.tag)}
       >
-        {prompt.tag}
+        #{prompt.tag}
       </p>
+      {session?.user.id === prompt.creator?._id && pathName == "/profile" && (
+        <div className="mt-5 flex-center gap-4 border-t border-gray-100 pt-3">
+          <p
+            className="text-sm green_gradient cursor-pointer"
+            onClick={() => handleEdit?.(prompt)}
+          >
+            Edit
+          </p>
+          <p
+            className="text-sm orange_gradient cursor-pointer"
+            onClick={() => handleDelete?.(prompt)}
+          >
+            Delete
+          </p>
+        </div>
+      )}
     </div>
   );
 };
