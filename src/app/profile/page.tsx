@@ -1,19 +1,27 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Profile from "@/components/Profile";
+
+interface Prompt {
+  _id: string;
+  prompt: string;
+  tag: string;
+}
 
 const page = () => {
   const [prompts, setPrompts] = useState([]);
 
   const { data: session } = useSession();
+  const router = useRouter();
 
-  const handleEdit = async () => {
-    console.log("Edit");
+  const handleEdit = async (prompt: Prompt) => {
+    router.push(`/update-prompt?id=${prompt._id}`);
   };
 
-  const handleDelete = async () => {
-    console.log("Delete");
+  const handleDelete = async (prompt: Prompt) => {
+    console.log("Post Deleted")
   };
 
   const fetchPosts = async () => {
