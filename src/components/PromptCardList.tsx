@@ -6,6 +6,7 @@ type Prompt = {
     prompt: string;
     tag: string;
     creator?: {
+      _id: string;
       username?: string;
       email?: string;
       image?: string;
